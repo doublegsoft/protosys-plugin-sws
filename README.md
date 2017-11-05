@@ -107,6 +107,8 @@ get是http method。
 
 </mps/measpoints>是返回的jsp路径标识。
 
+{}大括号内为逻辑执行方法体，暂时为实现。
+
 #### REST控制器
 
 #### 页面
