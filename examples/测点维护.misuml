@@ -1,0 +1,239 @@
+name: dsom
+codegen: sws
+api:
+-   description: 查询测点列表
+    module: mps
+    sqlModel: 'find@dsom.mps.measpoint.find(t_measpoint-[mnritmfile] + sws_t_section ? mpnm%%, crscnm%%, pointid=)'
+
+-   description: 查询断面列表
+    module: mps
+    sqlModel: 'find@dsom.mps.section.find(sws_t_section ? crscnm%%, pointid=)'
+
+-   description: 创建一个测点
+    module: mps
+    sqlModel: 'create@dsom.mps.measpoint.create(t_measpoint)'
+
+-   description: 更新一个测点
+    module: mps
+    sqlModel: 'update@dsom.mps.measpoint.update(t_measpoint ? pointid=)'
+
+-   description: 更新一个测点的扩展属性
+    module: mps
+    sqlModel: 'update@dsom.mps.measpoint.xproperty.update(t_measpoint[xproperty] ? pointid=)'
+
+-   description: 创建一个断面
+    module: mps
+    sqlModel: 'create@dsom.mps.section.create(sws_t_section)'
+
+-   description: 更新一个测点
+    module: mps
+    sqlModel: 'update@dsom.mps.section.update(sws_t_section ? crsc=)'
+
+-   description: 更新一个测点的扩展属性
+    module: mps
+    sqlModel: 'update@dsom.mps.section.xproperty.update(sws_t_section[xproperty] ? crsc=)'
+
+#
+# 数据控制器
+#
+-   description: 保存测点
+    module: mps
+    dataModel: |-
+        post@/data/dsom/mps/measpoint/save (wrp, wrpcd) <pointid> {
+
+        }
+
+-   description: 保存断面
+    module: mps
+    dataModel: |-
+        post@/data/dsom/mps/section/save (wrp, wrpcd) <pointid> {
+
+        }
+
+-   description: 保存测点扩展属性
+    module: mps
+    dataModel: |-
+        post@/data/dsom/mps/measpoint/xproperty/save (wrp, wrpcd) <pointid> {
+
+        }
+
+-   description: 保存断面扩展属性
+    module: mps
+    dataModel: |-
+        post@/data/dsom/mps/section/xproperty/save (wrp, wrpcd) <pointid> {
+
+        }
+
+#
+# 视图控制器
+#
+-   description: 测点列表
+    module: mps
+    name: 测点列表
+    viewModel: |-
+        get@/view/dsom/mps/measpoints (wrp, wrpcd) </mps/measpoints> {
+
+        }
+
+-   description: 断面列表
+    module: mps
+    name: 断面列表
+    viewModel: |-
+        get@/view/dsom/mps/sections (wrp, wrpcd) </mps/sections> {
+
+        }
+
+-   description: 断面设置
+    module: mps
+    name: 断面设置
+    viewModel: |-
+        get@/view/dsom/mps/section (wrp, wrpcd) </mps/section> {
+
+        }
+
+-   description: 测点设置
+    module: mps
+    name: 测点设置
+    viewModel: |-
+        get@/view/dsom/mps/measpoint (mpcd, pointid) </mps/measpoint> {
+
+        }
+
+-   description: 测点设置（基本信息）
+    module: mps
+    name: 测点设置（基本信息）
+    viewModel: |-
+        get@/view/dsom/mps/measpoint/base (mpcd, pointid) </mps/measpoint_base> {
+
+        }
+
+-   description: 测点设置（基本信息）
+    module: mps
+    name: 测点设置（断面位置）
+    viewModel: |-
+        get@/view/dsom/mps/measpoint/location (mpcd, pointid) </mps/measpoint_location> {
+
+        }
+
+-   description: 测点全景图设置
+    module: mps
+    name: 测点全景图设置
+    viewModel: |-
+        get@/view/dsom/mps/measpoint/panorama (wrp, wrpcd) </mps/panorama> {
+
+        }
+
+usecases:
+-   name: measpoints
+    module: mps
+    description: 测点列表
+    view: '
+        measpoints:page(text: "测点列表")<
+            measpoint_sheet:form(sqlId: "todo")<
+                mpnm:file(text: "上传测点配置表")
+            >,
+            measpoints_query:query(sqlId: "todo")<
+                mpnm:input(text: "测点名称"),
+                crscnm:select(text: "断面名称"),
+                mnritm:select(text: "监测要素")
+            >,
+            buttons<
+                (type: "query", text: "查询", for: "measpoints_list")
+            >,
+            measpoints_list:pagination-table(with: "measpoints_query")<
+                mpnm:label(text: "测点名称"),
+                crscnm:label(text: "断面名称"),
+                link(text: "操作")
+            >
+        >
+    '
+
+-   name: sections
+    module: mps
+    description: 断面列表
+    view: '
+        sections:page(text: "断面列表")<
+            sections_query:query(sqlId: "todo")<
+                mpnm:input(text: "断面名称")
+            >,
+            buttons<
+                (type: "query", text: "查询", for: "sections_list")
+            >,
+            sections_list:pagination-table(with: "sections_query")<
+                crscnm:label(text: "断面名称"),
+                link(text: "操作")
+            >
+        >
+    '
+
+-   name: measpoint
+    module: mps
+    description: 测点设置
+    view: '
+        measpoint:page(text: "测点设置")<
+            measpoint_tab:tabs(lazy: "true")<
+                tab(text: "基本信息", href: "/view/dsom/mps/measpoint/base.do?wrp=${wrp}&wrpcd=${wrpcd}&pointid=${pointid}"),
+                tab(text: "断面坐标", href: "/view/dsom/mps/measpoint/location.do?wrp=${wrp}&wrpcd=${wrpcd}&pointid=${pointid}"),
+                tab(text: "全景坐标", href: "/view/dsom/mps/measpoint/panorama.do?wrp=${wrp}&wrpcd=${wrpcd}&pointid=${pointid}")
+            >
+        >
+    '
+
+-   name: measpoint_base
+    module: mps
+    description: 测点基本信息
+    view: '
+        measpoint_base:page(text: "测点基本信息")<
+            panel(text: "基本属性")<
+                measpoint_base_form:form(text: "基本信息")<
+                    pointid:input(text: "测点编码"),
+                    stcd:input(text: "测站编码"),
+                    stcd:input(text: "测点名称"),
+                    wrpbldcd:select(text: "水工建筑物"),
+                    mnritm:select(text: "监测要素"),
+                    msmt:select(text: "监测方法"),
+                    crsc:select(text: "断面或分组")
+                >,
+                buttons<
+                    (type: "save", text: "保存", for: "measpoint_base_form", url: "${contextPath}/data/dsom/mps/measpoint/save.do")
+                >
+            >,
+            panel(text: "扩展属性")<
+                measpoint_basex_form:form(text: "扩展属性")<
+                    r1_formula:input(text: "R1公式"),
+                    r2_formula:input(text: "R2公式"),
+                    r3_formula:input(text: "R3公式"),
+                    x:input(text: "安装位置x"),
+                    y:input(text: "安装位置y"),
+                    crsc:select(text: "断面或分组")
+                >,
+                buttons<
+                    (type: "save", text: "保存", for: "measpoint_basex_form", url: "${contextPath}/data/dsom/mps/measpoint/xproperty/save.do")
+                >
+            >
+        >
+    '
+
+-   name: measpoint_location
+    module: mps
+    description: 测点断面坐标
+    view: '
+        measpoint_location:page(text: "测点坐标 ")<
+            query(text: "")<
+                crsc:select(text: "断面或分组")
+            >,
+            crscimg:image(text: "断面", pos: "(100%, 100%)")
+        >
+    '
+
+-   name: measpoint_panorama
+    module: mps
+    description: 测点全景坐标
+    view: '
+        measpoint_panorama:page(text: "测点坐标 ")<
+            query(text: "")<
+                panos:select(text: "全景图片")
+            >,
+            panoimg:image(text: "", pos: "(100%, 100%)")
+        >
+    '
