@@ -1,4 +1,4 @@
-## MISUML语言
+## MISUML语言介绍
 
 ### 项目名称
 
@@ -7,7 +7,7 @@ name: dsom
 codegen: sws
 </pre>
 
-### API设计
+### API设计语言
 
 #### SQL语言
 
@@ -94,7 +94,7 @@ api:
     module: mps
     name: 测点列表
     viewModel: |-
-        get@/view/dsom/mps/measpoints (wrp, wrpcd) </mps/measpoints> {
+        get@/view/dsom/mps/measpoints (wrp, wrpcd) &lt;/mps/measpoints&gt; {
 
         }
 </pre>
@@ -136,3 +136,5 @@ get是http method。
         >
     '
 </pre>
+
+页面元素的构造是id:元素类型(属性)<子元素>的语法。
