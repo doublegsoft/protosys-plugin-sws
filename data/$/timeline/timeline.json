@@ -1,0 +1,9 @@
+{
+    "events#event": [{
+        "title*": "string",
+        "time*": "datetime",
+        "person": "string",
+        "descr*": "string",
+        "icon": "string"
+    }]
+}
